@@ -13,12 +13,12 @@ def master(release, user, pword, host, port):
 
     ## Get all human protein coding genes from ensembl and a count of all uniqe domains.
     import os
-    import pfamDomains
-    import mapPfamDomains
-    import pdbChembl
-    import uniprotChembl
-    import analysis
-    import yaml
+    import pfamDomains  #creates pfamDict and pfam_domains
+    import mapPfamDomains   #Carry out the mapping and save results
+    import pdbChembl    #Retrieves all binding site residues for interactions in ChEMBL.
+    import uniprotChembl    ### Get all protein targets from ChEBML. ## Get Uniprot binding site annotation for each target.
+    import analysis     #Carries out the analysis of the data generated in the previous steps.
+    import yaml     #YAML is a data serialization format designed for human readability and interaction with scripting languages.
     # Read config file.
     paramFile = open('mpf.yaml')
     params = yaml.safe_load(paramFile)

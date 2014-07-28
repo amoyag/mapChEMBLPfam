@@ -9,18 +9,16 @@ Carries out the analysis of the data generated in the previous steps.
 """  
 def analysis(release):
 
-    import yaml
-    # Read config file.
-    paramFile = open('mpf.yaml')
-    params = yaml.safe_load(paramFile)
-    user = params['user']
-    pword = params['pword']
-    host = params['host']
-    port = params['port']
-    th = params['threshold']
-
-
-  ####
+  import yaml
+  # Read config file.
+  paramFile = open('mpf.yaml')
+  params = yaml.safe_load(paramFile)
+  user = params['user']
+  pword = params['pword']
+  host = params['host']
+  port = params['port']
+  th = params['threshold']
+    ####
   #### Load data.
   ####
   

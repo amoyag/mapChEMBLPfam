@@ -1,30 +1,62 @@
+# def getLigandsForTarget(target, release, user, pword, host, port):
+#
+#   import queryDevice
+#   ligands = queryDevice.queryDevice("SELECT DISTINCT act.molregno, standard_value,\
+#          standard_type, standard_units, canonical_smiles, act.relation, act.activity_id \
+#                                                                                 \
+#                                         FROM activities act \
+#                                         JOIN assay2target a2t \
+#                                             ON act.assay_id = a2t.assay_id\
+#                                         JOIN target_dictionary td \
+#                                             ON a2t.tid = td.tid \
+#                                         JOIN assays ass \
+#                                             ON ass.assay_id = act.assay_id \
+#                                         JOIN compound_structures cs \
+#                                             ON cs.molregno=act.molregno \
+#                                                                         \
+#                                  WHERE td.protein_accession = '%s' \
+#                                  AND ass.assay_type='B'  \
+#                                  AND act.relation ='='    \
+#                                  AND a2t.multi=0  \
+#                                  AND a2t.complex=0 \
+#                                  AND a2t.relationship_type = 'D'\
+#                                  AND act.standard_type IN('Ki','Kd','IC50', \
+#                                 'EC50','-Log Ki','pKd' , 'pA2', 'pI', 'pKa')" \
+#                                         %target, 'ChEMBL_%s' %release, user, pword, host, port)
+#   return ligands
+
+
+##########
+########## assay2target table does not exist (Chembl18 Chembl19). Modified mysql query below
+##########
+
 def getLigandsForTarget(target, release, user, pword, host, port):
 
   import queryDevice
   ligands = queryDevice.queryDevice("SELECT DISTINCT act.molregno, standard_value,\
-         standard_type, standard_units, canonical_smiles, act.relation, act.activity_id \
+         standard_type, standard_units, canonical_smiles, act.standard_relation, act.activity_id \
                                                                                 \
                                         FROM activities act \
-                                        JOIN assay2target a2t \
-                                            ON act.assay_id = a2t.assay_id\
-                                        JOIN target_dictionary td \
-                                            ON a2t.tid = td.tid \
                                         JOIN assays ass \
                                             ON ass.assay_id = act.assay_id \
+                                        JOIN target_dictionary td \
+                                            ON ass.tid = td.tid \
+                                        JOIN target_components tc \
+                                            ON td.tid = tc.tid \
+                                        JOIN component_sequences cos \
+                                            ON tc.component_id = cos.component_id \
                                         JOIN compound_structures cs \
                                             ON cs.molregno=act.molregno \
                                                                         \
-                                 WHERE td.protein_accession = '%s' \
+                                 WHERE cos.accession = '%s' \
                                  AND ass.assay_type='B'  \
-                                 AND act.relation ='='    \
-                                 AND a2t.multi=0  \
-                                 AND a2t.complex=0 \
-                                 AND a2t.relationship_type = 'D'\
+                                 AND ass.relationship_type = 'D'\
                                  AND act.standard_type IN('Ki','Kd','IC50', \
                                 'EC50','-Log Ki','pKd' , 'pA2', 'pI', 'pKa')" \
-                                        %target, release, user, pword, host, port)
+                                        %target, 'ChEMBL_%s' %release, user, pword, host, port)
   return ligands
-
+  
+  
 
 """
   Function:  filterForTarget
@@ -55,7 +87,8 @@ def filterForTarget(ligands, threshold):
     standardUnit = data[3]
     smiles = data[4]
     relation = data[5]
-    docId = data[6]
+    # docId = data[6]
+    actId = data[6]
     if standardType in ['Ki','IC50', 'EC50'] and standardUnit == 'nM' and relation == '=':
       pAfnty = (-1) * math.log10(standardValue/float(1000000000))
     elif standardType in ['-Log Ki','pKd', 'pA2', 'pI', 'pKi']:
@@ -68,7 +101,8 @@ def filterForTarget(ligands, threshold):
       continue
 
     else:
-      ligandList.append([smiles,pAfnty,molregno, docId])
+      # ligandList.append([smiles,pAfnty,molregno, docId])
+      ligandList.append([smiles,pAfnty,molregno, actId])
   return ligandList
 
 

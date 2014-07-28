@@ -22,6 +22,7 @@ pword = params['pword']
 host = params['host']
 port = params['port']
 th = params['threshold']
+
                                               
 def mapPDs(th, release, user, pword, host, port): 
 
@@ -30,7 +31,8 @@ def mapPDs(th, release, user, pword, host, port):
     threshold = -np.log10(th*10**(-6))
     
     ## Get a list of all ChEMBL targets.
-    chemblTargets = getUniprotTargets(release, user, pword, host, port)
+    import getUniprotTargets #Edit Aurelio
+    chemblTargets = getUniprotTargets.getUniprotTargets(release, user, pword, host, port) #edit Aurelio
 
     ## Load the pfamDict.
     import pickle

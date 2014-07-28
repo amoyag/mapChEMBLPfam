@@ -1,3 +1,25 @@
+"""
+Function: getTargets
+
+gets UniProt accession for human proteins from the Chembl
+target dictionary. Edited after getUniProtTargets
+momo.sander@googlemail.com
+"""
+import queryDevice
+
+def getTargets(release, user, pword, host, port):
+    #release_number = int(release.split('_')[1])
+    release_number = int(release)
+    if release_number >= 15:
+        rawtargets = queryDevice.queryDevice("""SELECT DISTINCT accession 
+        FROM component_sequences
+        WHERE ORGANISM = 'Homo sapiens'""", 'ChEMBL_%s' %release, user, pword, host, port)
+    targets= []
+    for target in rawtargets:
+        targets.append(target[0])
+    return targets 
+
+
 
 
 """
@@ -70,4 +92,28 @@ def getDomains(targets,release):
   print "encountered Error for", errors
   return pfamDict   
    
+
+
+if __name__ == '__main__':
+    import sys
+
+    if len(sys.argv) < 5:  # the program name and the two arguments
+
+        sys.exit("Must specify release, user, pword, host, port")
+
+        
+    release = sys.argv[1]
+    user = sys.argv[2]
+    pword = sys.argv[3]
+    host = sys.argv[4]
+    port = int(sys.argv[5])
+
+    targets = getTargets(release, user, pword, host, port)
+
+
+getDomains(targets, release)
+
+
+
+
 
